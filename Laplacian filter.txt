@@ -1,0 +1,52 @@
+/*
+ * This code comes from Visual Tech Art's video tutorial
+ * You can find it here: https://youtu.be/Ptuw9mxekh0
+ * VTA YouTube Channel: https://www.youtube.com/c/VisualTechArt
+ * VTA Discord Server: https://discord.gg/YvXq3t675Q
+ * VTA Patreon Page: https://www.patreon.com/VisualTechArt
+ * VTA Gumroad Page: https://jumpeter.gumroad.com/
+*/
+
+/*
+ * To use this code:
+ * Be sure to be inside a Post Process Material.
+ * Copy&Paste all this text inside a Custom Node (both UE5 and UE4 work).
+ * Set the Node output to 'CMOT Float 4'.
+ * Give a name different than 'None' to the Node input created by default.
+ * Plug in that input pin a 'SceneTexture' node set to 'PostProcessInput0'.
+ * Enjoy :)  (Or follow the video to understand how everything works)
+*/
+
+float2 KernelUVs = GetDefaultSceneTextureUV(Parameters, 1);
+float2 TexelSize = GetSceneTextureViewSize(1).zw;
+float2 PixelUVs;
+
+float KERNEL_SIZE = 9.0;
+
+float3 LaplacianFilter_Normal = float3(0.0, 0.0, 0.0);
+float LaplacianFilter_Depth = 0.0;
+float CenterWeight = KERNEL_SIZE*KERNEL_SIZE;
+
+float HALF_KERNEL_SIZE = floor(KERNEL_SIZE/2.0);
+
+for(float y = -HALF_KERNEL_SIZE; y <= HALF_KERNEL_SIZE; y++)
+{
+	for(float x = -HALF_KERNEL_SIZE; x <= HALF_KERNEL_SIZE; x++)
+	{
+		// Sottraggo anche il pixel centrale, sbattendomene
+		PixelUVs = KernelUVs + TexelSize*float2(x, y);
+		
+		LaplacianFilter_Normal -= SceneTextureLookup(PixelUVs, 8, false).rgb;
+		LaplacianFilter_Depth -= SceneTextureLookup(PixelUVs, 1, false).r;
+	}
+}
+
+LaplacianFilter_Normal += SceneTextureLookup(KernelUVs, 8, false).rgb * CenterWeight;
+LaplacianFilter_Depth += SceneTextureLookup(KernelUVs, 1, false).r * CenterWeight;
+
+CenterWeight--;
+CenterWeight= 1.0 / CenterWeight;
+LaplacianFilter_Normal *= CenterWeight;
+LaplacianFilter_Depth *= CenterWeight;
+
+return float4(LaplacianFilter_Normal, LaplacianFilter_Depth);

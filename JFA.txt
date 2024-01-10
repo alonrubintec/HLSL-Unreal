@@ -1,0 +1,17 @@
+float bestDistance = 99999;
+float2 bestUV = float2(-1,-1);
+
+for(int y = -1; y<= 1; ++y){
+	for(int x = -1; x<= 1; ++x){
+		float2 UV_off = UV + float2(x,y) * StepSize;
+		float2 tempVaule = Texture2DSample(Tex, TexSampler, UV_off).xy;
+		float dist = length(tempVaule - UV);
+
+		if((tempVaule.x >= 0)&&(tempVaule.y >= 0)&&(dist < bestDistance)){
+			bestDistance = dist;
+			bestUV = tempVaule;
+		}
+	}
+}
+
+return float4(bestUV,0,0);
