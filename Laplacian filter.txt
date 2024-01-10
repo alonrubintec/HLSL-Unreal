@@ -1,13 +1,4 @@
 /*
- * This code comes from Visual Tech Art's video tutorial
- * You can find it here: https://youtu.be/Ptuw9mxekh0
- * VTA YouTube Channel: https://www.youtube.com/c/VisualTechArt
- * VTA Discord Server: https://discord.gg/YvXq3t675Q
- * VTA Patreon Page: https://www.patreon.com/VisualTechArt
- * VTA Gumroad Page: https://jumpeter.gumroad.com/
-*/
-
-/*
  * To use this code:
  * Be sure to be inside a Post Process Material.
  * Copy&Paste all this text inside a Custom Node (both UE5 and UE4 work).
